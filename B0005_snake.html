@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .game-title {
+            color: #1890ff;
+            margin-bottom: 20px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .game-title:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #1890ff, #40a9ff);
+            margin: 10px auto;
+            border-radius: 3px;
+        }
+        .game-board {
+            border: 2px solid #1890ff;
+            background-color: #fff;
+            margin: 0 auto;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .game-board:hover {
+            transform: scale(1.01);
+        }
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #333;
+            font-weight: bold;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #40a9ff;
+        }
+        .btn-danger {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #ff7875;
+        }
+        .btn-warning {
+            background-color: #faad14;
+            color: white;
+        }
+        .btn-warning:hover {
+            background-color: #ffc53d;
+        }
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.5s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            min-width: 250px;
+        }
+        .game-over h2 {
+            margin-bottom: 15px;
+            color: #ff4d4f;
+            font-size: 28px;
+        }
+        .game-over p {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .speed-controls {
+            margin-top: 5px;
+            background-color: rgba(24, 144, 255, 0.1);
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+        .speed-label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #1890ff;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                max-width: 95%;
+            }
+            .game-board {
+                width: 300px;
+                height: 300px;
+            }
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            .control-row {
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="game-title">贪吃蛇</h1>
+        <div class="score">分数：<span id="score">0</span></div>
+        <canvas id="gameBoard" class="game-board" width="400" height="400"></canvas>
+        <div class="game-over" id="gameOver">
+            <h2>游戏结束</h2>
+            <p>最终得分：<span id="finalScore">0</span></p>
+            <button class="btn btn-primary" onclick="startGame()">再玩一次</button>
+        </div>
+        <div class="controls">
+            <div class="control-row">
+                <button class="btn btn-primary" id="startBtn" onclick="startGame()">开始游戏</button>
+                <button class="btn btn-warning" id="pauseBtn" onclick="pauseGame()">暂停</button>
+                <button class="btn btn-danger" id="endBtn" onclick="gameOver()">结束游戏</button>
+            </div>
+            <div class="control-row">
+                <button class="btn btn-primary" id="aiBtn" onclick="toggleAI()">AI托管</button>
+                <span class="speed-label">速度：</span>
+            </div>
+        </div>
+        <div class="speed-controls">
+            <button class="btn btn-primary" onclick="changeSpeed(200)">极慢</button>
+            <button class="btn btn-primary" onclick="changeSpeed(150)">慢速</button>
+            <button class="btn btn-primary" onclick="changeSpeed(100)">中速</button>
+            <button class="btn btn-primary" onclick="changeSpeed(70)">快速</button>
+            <button class="btn btn-primary" onclick="changeSpeed(40)">极快</button>
+        </div>
+    </div>
+
+    <script src="B0005_snake.js"></script>
+</body>
+</html>

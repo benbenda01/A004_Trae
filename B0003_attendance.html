@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作打卡系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            color: #1890ff;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .logout-btn {
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #ff7875;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .time-display {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+        .date-display {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #40a9ff;
+        }
+        .btn-success {
+            background-color: #52c41a;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #73d13d;
+        }
+        .btn-danger {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #ff7875;
+        }
+        .btn:disabled {
+            background-color: #d9d9d9;
+            cursor: not-allowed;
+        }
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .records-table th, .records-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .records-table th {
+            background-color: #fafafa;
+        }
+        .admin-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #1890ff;
+            text-decoration: none;
+        }
+        .admin-link:hover {
+            text-decoration: underline;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1890ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- 登录表单 -->
+        <div id="loginForm" class="login-form" style="display: none;">
+            <h2 class="form-title">用户登录</h2>
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">登录</button>
+        </div>
+
+        <!-- 打卡系统主界面 -->
+        <div id="mainContent" style="display: none;">
+            <div class="header">
+                <h1>工作打卡系统</h1>
+                <div class="user-info">
+                    欢迎，<span id="userName"></span>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="time-display" id="timeDisplay">00:00:00</div>
+                <div class="date-display" id="dateDisplay">2023年1月1日 星期一</div>
+                <div class="btn-group">
+                    <button id="checkInBtn" class="btn btn-primary" onclick="checkIn()">上班打卡</button>
+                    <button id="checkOutBtn" class="btn btn-danger" onclick="checkOut()" disabled>下班打卡</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>我的考勤记录</h2>
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>上班时间</th>
+                            <th>下班时间</th>
+                            <th>工作时长</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody"></tbody>
+                </table>
+            </div>
+
+            <a href="B0002_admin.html" class="admin-link">进入管理后台</a>
+        </div>
+    </div>
+
+    <script src="B0003_attendance.js"></script>
+</body>
+</html>

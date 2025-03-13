@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作打卡系统 - 后台管理</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            color: #1890ff;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .logout-btn {
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #ff7875;
+        }
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #666;
+        }
+        .nav-tab.active {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+        }
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #40a9ff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #fafafa;
+            font-weight: 500;
+        }
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .edit-btn {
+            background-color: #52c41a;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #ff4d4f;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>工作打卡系统 - 后台管理</h1>
+            <div class="user-info">
+                管理员：<span id="adminName"></span>
+                <button class="logout-btn" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('users')">用户管理</button>
+            <button class="nav-tab" onclick="showTab('attendance')">考勤管理</button>
+            <button class="nav-tab" onclick="showTab('settings')">系统设置</button>
+        </div>
+
+        <!-- 用户管理 -->
+        <div id="usersTab" class="tab-content active">
+            <button class="btn btn-primary" onclick="showAddUserForm()">添加用户</button>
+            <div id="userForm" style="display: none; margin-top: 20px;">
+                <h3>添加/编辑用户</h3>
+                <div class="form-group">
+                    <label for="editUsername">用户名</label>
+                    <input type="text" id="editUsername">
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">密码</label>
+                    <input type="password" id="editPassword">
+                </div>
+                <div class="form-group">
+                    <label for="editName">姓名</label>
+                    <input type="text" id="editName">
+                </div>
+                <button class="btn btn-primary" onclick="saveUser()">保存</button>
+                <button class="btn" onclick="cancelEdit()">取消</button>
+            </div>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 考勤管理 -->
+        <div id="attendanceTab" class="tab-content">
+            <div class="form-group" style="max-width: 200px;">
+                <label for="userFilter">选择用户</label>
+                <select id="userFilter" onchange="filterAttendance()">
+                    <option value="">全部用户</option>
+                </select>
+            </div>
+            <table id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>日期</th>
+                        <th>上班时间</th>
+                        <th>下班时间</th>
+                        <th>工作时长</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 系统设置 -->
+        <div id="settingsTab" class="tab-content">
+            <h3>工作时间设置</h3>
+            <div class="form-group">
+                <label for="workStartTime">规定上班时间</label>
+                <input type="time" id="workStartTime">
+            </div>
+            <div class="form-group">
+                <label for="workEndTime">规定下班时间</label>
+                <input type="time" id="workEndTime">
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+        </div>
+    </div>
+
+    <script src="B0002_admin.js"></script>
+</body>
+</html>

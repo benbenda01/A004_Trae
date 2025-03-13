@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程表</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1890ff;
+            margin-bottom: 20px;
+        }
+        .schedule {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+            border: 1px solid #ddd;
+        }
+        .schedule-header {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .schedule-body {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            gap: 1px;
+        }
+        .time-slot {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+        }
+        .course-cell {
+            background-color: white;
+            padding: 10px;
+            height: 100px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .course-cell:hover {
+            background-color: #f0f8ff;
+        }
+        .course-item {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #e6f7ff;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        .course-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .course-location {
+            font-size: 12px;
+            color: #666;
+        }
+        .course-form {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .form-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-default {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>课程表</h1>
+        
+        <div class="schedule">
+            <div class="schedule-header">时间/日期</div>
+            <div class="schedule-header">周一</div>
+            <div class="schedule-header">周二</div>
+            <div class="schedule-header">周三</div>
+            <div class="schedule-header">周四</div>
+            <div class="schedule-header">周五</div>
+            <div class="schedule-header">周六</div>
+            <div class="schedule-header">周日</div>
+        </div>
+        
+        <div class="schedule-body" id="scheduleBody">
+            <!-- 课程表内容将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <!-- 添加/编辑课程表单 -->
+    <div class="course-form" id="courseForm">
+        <div class="form-content">
+            <h2>添加/编辑课程</h2>
+            <div class="form-group">
+                <label for="courseName">课程名称</label>
+                <input type="text" id="courseName">
+            </div>
+            <div class="form-group">
+                <label for="courseLocation">上课地点</label>
+                <input type="text" id="courseLocation">
+            </div>
+            <input type="hidden" id="courseDay">
+            <input type="hidden" id="courseTime">
+            <div class="form-buttons">
+                <button class="btn btn-default" onclick="hideCourseForm()">取消</button>
+                <button class="btn btn-primary" onclick="saveCourse()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="B0007_schedule.js"></script>
+</body>
+</html>

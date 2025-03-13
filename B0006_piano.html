@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线钢琴</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .piano-title {
+            color: #1890ff;
+            margin-bottom: 20px;
+        }
+        .piano {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto;
+        }
+        .white-key {
+            width: 60px;
+            height: 200px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+        .white-key:hover {
+            background-color: #f0f0f0;
+        }
+        .white-key.active {
+            background-color: #e6f7ff;
+        }
+        .black-key {
+            width: 40px;
+            height: 120px;
+            background-color: #333;
+            position: absolute;
+            border-radius: 0 0 5px 5px;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .black-key:hover {
+            background-color: #555;
+        }
+        .black-key.active {
+            background-color: #666;
+        }
+        .controls {
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #40a9ff;
+        }
+        .note-name {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="piano-title">在线钢琴</h1>
+        <div class="piano" id="piano">
+            <!-- 钢琴键将通过JavaScript动态生成 -->
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="toggleRecording()">录制</button>
+            <button class="btn btn-primary" onclick="playRecording()">播放</button>
+            <button class="btn btn-primary" onclick="clearRecording()">清除</button>
+        </div>
+    </div>
+
+    <script src="B0006_piano.js"></script>
+</body>
+</html>
