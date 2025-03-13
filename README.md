@@ -1,10 +1,20 @@
 # 多功能Web应用集合
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 ## 项目概述
 
 本项目是一个基于Web的多功能应用集合，包含工作管理、娱乐休闲等多种实用工具。项目采用纯前端实现，使用HTML、CSS和JavaScript构建，数据存储采用浏览器的localStorage机制，无需后端服务器支持，可直接在浏览器中运行。
 
-## 项目结构
+## 功能特点
+
+- **纯前端实现**：无需服务器，直接在浏览器中运行
+- **多功能集成**：工作管理、游戏娱乐等多种功能于一体
+- **本地数据存储**：使用localStorage保存用户数据
+- **响应式设计**：适配不同设备屏幕尺寸
+- **无外部依赖**：不依赖任何第三方框架或库
+
+## 应用模块
 
 项目由以下几个主要模块组成：
 
@@ -16,7 +26,7 @@
 - **在线钢琴** (B0006_piano.html, B0006_piano.js): 在线弹奏钢琴的音乐工具
 - **日程安排** (B0007_schedule.html, B0007_schedule.js): 个人日程管理工具
 
-## 功能说明
+## 功能详情
 
 ### 1. 应用导航
 
@@ -64,9 +74,20 @@
 
 由于使用localStorage，数据仅保存在用户本地浏览器中，不同设备或浏览器之间的数据不会同步。
 
-## 使用说明
+## 快速开始
 
-1. 直接打开B0001_index.html进入应用导航页面
+### 安装
+
+1. 克隆仓库到本地
+   ```bash
+   git clone https://github.com/yourusername/web-app-collection.git
+   ```
+
+2. 无需安装任何依赖，直接打开项目文件即可
+
+### 使用方法
+
+1. 直接打开`B0001_index.html`进入应用导航页面
 2. 点击对应应用的入口链接进入具体应用
 3. 各应用的具体使用方法可在应用内查看
 
@@ -75,3 +96,16 @@
 - 本项目为纯前端应用，所有数据存储在浏览器本地，清除浏览器缓存会导致数据丢失
 - 建议使用现代浏览器（Chrome, Firefox, Edge等）访问以获得最佳体验
 - 首次使用工作打卡系统和后台管理需要注册或使用默认账户登录
+
+## 贡献指南
+
+欢迎贡献代码或提出建议，请按以下步骤操作：
+
+1. Fork 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开一个 Pull Request
+
+
+
