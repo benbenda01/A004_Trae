@@ -80,7 +80,7 @@
 
 1. 克隆仓库到本地
    ```bash
-   git clone https://github.com/yourusername/web-app-collection.git
+   git clone https://github.com/benbenda01/A004_Trae.git
    ```
 
 2. 无需安装任何依赖，直接打开项目文件即可
@@ -90,6 +90,15 @@
 1. 直接打开`B0001_index.html`进入应用导航页面
 2. 点击对应应用的入口链接进入具体应用
 3. 各应用的具体使用方法可在应用内查看
+
+## 浏览器兼容性
+
+本项目已在以下浏览器中测试通过：
+
+- Google Chrome (最新版)
+- Mozilla Firefox (最新版)
+- Microsoft Edge (最新版)
+- Safari (最新版)
 
 ## 注意事项
 
@@ -107,5 +116,13 @@
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 打开一个 Pull Request
 
+## 许可证
 
+本项目采用 MIT 许可证 - 详情请参阅 [LICENSE](LICENSE) 文件
 
+## 联系方式
+
+如有任何问题或建议，请通过以下方式联系我们：
+
+- 项目团队: Web应用集合项目团队
+- GitHub Issues: [https://github.com/benbenda01/A004_Trae/issues](https://github.com/yourusername/web-app-collection/issues)
