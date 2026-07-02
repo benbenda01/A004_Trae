@@ -60,7 +60,7 @@ function showLoginForm() {
             <input type="password" id="adminPassword" style="width: 100%; padding: 8px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <button id="adminLoginBtn" style="width: 100%; padding: 10px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">登录</button>
-        <p style="margin-top: 15px; text-align: center;"><a href="B0201_attendance.html" style="color: #1890ff; text-decoration: none;">返回打卡系统</a></p>
+        <p style="margin-top: 15px; text-align: center;"><a href="B0003_attendance.html" style="color: #1890ff; text-decoration: none;">返回打卡系统</a></p>
     `;
     
     loginForm.appendChild(formContent);
@@ -106,7 +106,7 @@ function logout() {
 }
 
 // 显示指定的标签页
-function showTab(tabName) {
+function showTab(tabName, event) {
     // 隐藏所有标签页内容
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(tab => tab.classList.remove('active'));
@@ -119,7 +119,9 @@ function showTab(tabName) {
     document.getElementById(tabName + 'Tab').classList.add('active');
     
     // 设置选中标签的活动状态
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
     
     // 如果是考勤管理标签，刷新数据
     if (tabName === 'attendance') {

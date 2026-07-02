@@ -145,10 +145,18 @@ function playCards() {
     // 获取选中的牌
     const selectedCards = gameState.selectedCards.map(index => gameState.players[0].cards[index]);
     
-    // 检查牌型是否合法（简化版）
+    // 检查牌型是否合法
     if (!isValidPlay(selectedCards)) {
         alert('出牌不符合规则！');
         return;
+    }
+    
+    // 检查是否能压过上一家的牌（如果不是先手）
+    if (gameState.lastPlayer !== -1 && gameState.lastPlayer !== 0) {
+        if (!canBeat(gameState.lastPlayedCards, selectedCards)) {
+            alert('你出的牌不能压过上一家！');
+            return;
+        }
     }
     
     // 记录最后出牌
@@ -197,63 +205,271 @@ function pass() {
     setTimeout(computerTurn, 1000);
 }
 
-// 电脑回合（简化版）
+// 电脑回合
 function computerTurn() {
-    // 电脑1出牌
-    let played = false;
-    
-    // 简单AI：随机出一张牌
-    if (Math.random() > 0.3) {
-        const randomIndex = Math.floor(Math.random() * gameState.players[1].cards.length);
-        const card = gameState.players[1].cards[randomIndex];
-        
-        gameState.lastPlayedCards = [card];
-        gameState.lastPlayer = 1;
-        gameState.players[1].cards.splice(randomIndex, 1);
-        played = true;
-        
-        alert(`${gameState.players[1].name}出了一张牌`);
-    } else {
-        alert(`${gameState.players[1].name}选择不出`);
-    }
-    
-    // 检查游戏是否结束
-    if (gameState.players[1].cards.length === 0) {
-        alert(`${gameState.players[1].name}获胜！`);
-        initGame();
-        return;
-    }
-    
-    // 电脑2出牌
-    setTimeout(() => {
-        if (Math.random() > 0.3) {
-            const randomIndex = Math.floor(Math.random() * gameState.players[2].cards.length);
-            const card = gameState.players[2].cards[randomIndex];
-            
-            gameState.lastPlayedCards = [card];
-            gameState.lastPlayer = 2;
-            gameState.players[2].cards.splice(randomIndex, 1);
-            
-            alert(`${gameState.players[2].name}出了一张牌`);
-        } else {
-            alert(`${gameState.players[2].name}选择不出`);
-        }
-        
-        // 检查游戏是否结束
-        if (gameState.players[2].cards.length === 0) {
-            alert(`${gameState.players[2].name}获胜！`);
+    playComputerTurn(1, () => {
+        if (gameState.players[1].cards.length === 0) {
+            alert(`${gameState.players[1].name}获胜！`);
             initGame();
             return;
         }
         
-        // 回到玩家回合
-        gameState.currentPlayer = 0;
-        document.getElementById('currentPlayer').textContent = gameState.players[0].name;
-    }, 1000);
+        setTimeout(() => {
+            playComputerTurn(2, () => {
+                if (gameState.players[2].cards.length === 0) {
+                    alert(`${gameState.players[2].name}获胜！`);
+                    initGame();
+                    return;
+                }
+                
+                gameState.currentPlayer = 0;
+                document.getElementById('currentPlayer').textContent = gameState.players[0].name;
+            });
+        }, 1000);
+    });
 }
 
-// 检查出牌是否合法（简化版）
+// 单个电脑玩家出牌
+function playComputerTurn(playerIndex, callback) {
+    const player = gameState.players[playerIndex];
+    const playableCards = findPlayableCards(player.cards);
+    
+    if (playableCards.length > 0) {
+        const selectedCards = playableCards[Math.floor(Math.random() * playableCards.length)];
+        
+        gameState.lastPlayedCards = selectedCards.cards;
+        gameState.lastPlayer = playerIndex;
+        
+        selectedCards.indices.sort((a, b) => b - a);
+        selectedCards.indices.forEach(index => {
+            player.cards.splice(index, 1);
+        });
+        
+        alert(`${player.name}出了${selectedCards.cards.length}张牌`);
+    } else {
+        alert(`${player.name}选择不出`);
+    }
+    
+    callback();
+}
+
+// 查找可出的牌
+function findPlayableCards(cards) {
+    const playable = [];
+    
+    if (gameState.lastPlayer === -1 || gameState.lastPlayer === 0) {
+        for (let i = 0; i < cards.length; i++) {
+            const single = [cards[i]];
+            if (isValidPlay(single)) {
+                playable.push({ cards: [...single], indices: [i] });
+            }
+        }
+        
+        for (let i = 0; i < cards.length; i++) {
+            for (let j = i + 1; j < cards.length; j++) {
+                const pair = [cards[i], cards[j]];
+                if (isValidPlay(pair)) {
+                    playable.push({ cards: [...pair], indices: [i, j] });
+                }
+            }
+        }
+    } else {
+        for (let i = 0; i < cards.length; i++) {
+            const single = [cards[i]];
+            if (isValidPlay(single) && canBeat(gameState.lastPlayedCards, single)) {
+                playable.push({ cards: [...single], indices: [i] });
+            }
+        }
+        
+        for (let i = 0; i < cards.length; i++) {
+            for (let j = i + 1; j < cards.length; j++) {
+                const pair = [cards[i], cards[j]];
+                if (isValidPlay(pair) && canBeat(gameState.lastPlayedCards, pair)) {
+                    playable.push({ cards: [...pair], indices: [i, j] });
+                }
+            }
+        }
+        
+        for (let i = 0; i < cards.length; i++) {
+            for (let j = i + 1; j < cards.length; j++) {
+                for (let k = j + 1; k < cards.length; k++) {
+                    const triple = [cards[i], cards[j], cards[k]];
+                    if (isValidPlay(triple) && canBeat(gameState.lastPlayedCards, triple)) {
+                        playable.push({ cards: [...triple], indices: [i, j, k] });
+                    }
+                }
+            }
+        }
+        
+        for (let i = 0; i < cards.length; i++) {
+            for (let j = i + 1; j < cards.length; j++) {
+                for (let k = j + 1; k < cards.length; k++) {
+                    for (let l = k + 1; l < cards.length; l++) {
+                        const four = [cards[i], cards[j], cards[k], cards[l]];
+                        if (isValidPlay(four) && canBeat(gameState.lastPlayedCards, four)) {
+                            playable.push({ cards: [...four], indices: [i, j, k, l] });
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return playable;
+}
+
+// 检查出牌是否合法
 function isValidPlay(cards) {
-    // 简化版：只检查是否出了牌，不检查牌型
-    return cards.length > 0;
+    if (cards.length === 0) return false;
+    
+    const cardType = getCardType(cards);
+    return cardType !== null;
+}
+
+// 获取牌型
+function getCardType(cards) {
+    const values = cards.map(c => c.value);
+    const sortedValues = [...values].sort((a, b) => getCardValue(a) - getCardValue(b));
+    
+    if (cards.length === 1) {
+        return { type: 'single', value: getCardValue(sortedValues[0]) };
+    }
+    
+    if (cards.length === 2) {
+        if (sortedValues[0] === sortedValues[1]) {
+            return { type: 'pair', value: getCardValue(sortedValues[0]) };
+        }
+        if (values.includes('Joker') && values.filter(v => v === 'Joker').length === 2) {
+            return { type: 'rocket', value: Infinity };
+        }
+        return null;
+    }
+    
+    if (cards.length === 3) {
+        if (sortedValues[0] === sortedValues[1] && sortedValues[1] === sortedValues[2]) {
+            return { type: 'triple', value: getCardValue(sortedValues[0]) };
+        }
+        return null;
+    }
+    
+    if (cards.length === 4) {
+        if (sortedValues[0] === sortedValues[1] && sortedValues[1] === sortedValues[2] && sortedValues[2] === sortedValues[3]) {
+            return { type: 'bomb', value: getCardValue(sortedValues[0]) };
+        }
+        
+        const valueCounts = getValueCounts(cards);
+        const tripleValue = Object.keys(valueCounts).find(k => valueCounts[k] === 3);
+        const singleValue = Object.keys(valueCounts).find(k => valueCounts[k] === 1);
+        if (tripleValue && singleValue) {
+            return { type: 'triple_single', value: getCardValue(tripleValue) };
+        }
+        return null;
+    }
+    
+    if (cards.length === 5) {
+        const valueCounts = getValueCounts(cards);
+        const pairValue = Object.keys(valueCounts).find(k => valueCounts[k] === 2);
+        const tripleValue = Object.keys(valueCounts).find(k => valueCounts[k] === 3);
+        if (pairValue && tripleValue) {
+            return { type: 'triple_pair', value: getCardValue(tripleValue) };
+        }
+        
+        if (isStraight(sortedValues)) {
+            return { type: 'straight', value: getCardValue(sortedValues[sortedValues.length - 1]) };
+        }
+        return null;
+    }
+    
+    if (cards.length >= 5 && cards.length <= 12 && cards.length % 1 === 0) {
+        if (isStraight(sortedValues)) {
+            return { type: 'straight', value: getCardValue(sortedValues[sortedValues.length - 1]) };
+        }
+    }
+    
+    if (cards.length >= 6 && cards.length % 2 === 0) {
+        if (isDoubleStraight(sortedValues)) {
+            return { type: 'double_straight', value: getCardValue(sortedValues[sortedValues.length - 1]) };
+        }
+    }
+    
+    if (cards.length >= 6 && cards.length % 3 === 0) {
+        if (isTripleStraight(sortedValues)) {
+            return { type: 'triple_straight', value: getCardValue(sortedValues[sortedValues.length - 1]) };
+        }
+    }
+    
+    return null;
+}
+
+// 获取牌的值（用于比较）
+function getCardValue(value) {
+    const cardOrder = { '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14, '2': 15 };
+    return cardOrder[value] || 0;
+}
+
+// 获取牌值计数
+function getValueCounts(cards) {
+    const counts = {};
+    cards.forEach(c => {
+        counts[c.value] = (counts[c.value] || 0) + 1;
+    });
+    return counts;
+}
+
+// 检查是否是顺子
+function isStraight(values) {
+    for (let i = 1; i < values.length; i++) {
+        if (getCardValue(values[i]) - getCardValue(values[i - 1]) !== 1) {
+            return false;
+        }
+    }
+    return getCardValue(values[0]) < 15 && getCardValue(values[values.length - 1]) <= 14;
+}
+
+// 检查是否是连对
+function isDoubleStraight(values) {
+    if (values.length % 2 !== 0) return false;
+    for (let i = 0; i < values.length; i += 2) {
+        if (values[i] !== values[i + 1]) return false;
+        if (i + 2 < values.length && getCardValue(values[i + 2]) - getCardValue(values[i]) !== 1) {
+            return false;
+        }
+    }
+    return getCardValue(values[0]) < 15;
+}
+
+// 检查是否是飞机（三顺）
+function isTripleStraight(values) {
+    if (values.length % 3 !== 0) return false;
+    for (let i = 0; i < values.length; i += 3) {
+        if (values[i] !== values[i + 1] || values[i + 1] !== values[i + 2]) return false;
+        if (i + 3 < values.length && getCardValue(values[i + 3]) - getCardValue(values[i]) !== 1) {
+            return false;
+        }
+    }
+    return getCardValue(values[0]) < 15;
+}
+
+// 比较两副牌是否能压过
+function canBeat(lastCards, newCards) {
+    if (lastCards.length === 0) return true;
+    
+    const lastType = getCardType(lastCards);
+    const newType = getCardType(newCards);
+    
+    if (!lastType || !newType) return false;
+    
+    if (newType.type === 'rocket') return true;
+    if (lastType.type === 'rocket') return false;
+    
+    if (newType.type === 'bomb') {
+        return lastType.type !== 'bomb' || newType.value > lastType.value;
+    }
+    if (lastType.type === 'bomb') return false;
+    
+    if (lastType.type !== newType.type) return false;
+    
+    if (lastCards.length !== newCards.length) return false;
+    
+    return newType.value > lastType.value;
 }

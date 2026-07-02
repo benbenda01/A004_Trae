@@ -75,6 +75,7 @@
             background-color: #e6f7ff;
             border-radius: 4px;
             padding: 5px;
+            position: relative;
         }
         .course-name {
             font-weight: bold;
@@ -83,6 +84,21 @@
         .course-location {
             font-size: 12px;
             color: #666;
+        }
+        .delete-course-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            padding: 2px 5px;
+            font-size: 10px;
+            background-color: #ff4d4f;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .delete-course-btn:hover {
+            background-color: #ff7875;
         }
         .course-form {
             position: fixed;
@@ -139,6 +155,7 @@
 </head>
 <body>
     <div class="container">
+        <a href="B0001_index.html" class="home-link" style="color: #1890ff; text-decoration: none; font-size: 14px;">← 返回主页</a>
         <h1>课程表</h1>
         
         <div class="schedule">

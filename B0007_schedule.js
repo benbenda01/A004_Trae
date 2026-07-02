@@ -56,10 +56,20 @@ function loadCourses() {
             courseElement.innerHTML = `
                 <div class="course-name">${course.name}</div>
                 <div class="course-location">${course.location}</div>
+                <button class="delete-course-btn" onclick="deleteCourse(${course.day}, ${course.time})">删除</button>
             `;
             cell.appendChild(courseElement);
         }
     });
+}
+
+// 删除课程
+function deleteCourse(day, time) {
+    if (confirm('确定要删除这门课程吗？')) {
+        courses = courses.filter(c => !(c.day === day && c.time === time));
+        localStorage.setItem('courses', JSON.stringify(courses));
+        loadCourses();
+    }
 }
 
 // 显示添加课程表单

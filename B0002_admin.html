@@ -31,6 +31,14 @@
         .header h1 {
             color: #1890ff;
         }
+        .home-link {
+            color: #1890ff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
         .user-info {
             text-align: right;
         }
@@ -134,6 +142,7 @@
 <body>
     <div class="container">
         <div class="header">
+            <a href="B0001_index.html" class="home-link">← 返回主页</a>
             <h1>工作打卡系统 - 后台管理</h1>
             <div class="user-info">
                 管理员：<span id="adminName"></span>
@@ -142,9 +151,9 @@
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('users')">用户管理</button>
-            <button class="nav-tab" onclick="showTab('attendance')">考勤管理</button>
-            <button class="nav-tab" onclick="showTab('settings')">系统设置</button>
+            <button class="nav-tab active" onclick="showTab('users', event)">用户管理</button>
+            <button class="nav-tab" onclick="showTab('attendance', event)">考勤管理</button>
+            <button class="nav-tab" onclick="showTab('settings', event)">系统设置</button>
         </div>
 
         <!-- 用户管理 -->
